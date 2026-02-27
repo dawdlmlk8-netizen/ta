@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>هدية خاصة - قلب حرف T</title>
+    <style>
+        :root {
+            --primary-color: #ff4d6d;
+            --bg-dark: #0f0c29;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: radial-gradient(circle, #240b36, #000000);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1000px;
+        }
+
+        /* شاشة البداية */
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 1s ease;
+        }
+
+        #start-btn {
+            padding: 15px 40px;
+            font-size: 24px;
+            color: white;
+            background: var(--primary-color);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 0 20px var(--primary-color);
+            transition: transform 0.3s;
+            letter-spacing: 2px;
+        }
+
+        #start-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* حاوية القلب */
+        .scene {
+            width: 300px;
+            height: 300px;
+            display: none; /* تظهر بعد الضغط على Start */
+            transform-style: preserve-3d;
+            position: relative;
+        }
+
+        .heart-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+
+        /* الحركة الدورانية */
+        .rotating-heart {
+            animation: rotateHeart 10s infinite linear;
+            transform-style: preserve-3d;
+        }
+
+        /* تصميم حرف T الموزع ليشكل قلب */
+        .letter-t {
+            position: absolute;
+            font-size: 40px;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-shadow: 0 0 10px rgba(255, 77, 109, 0.8);
+            user-select: none;
+        }
+
+        @keyframes rotateHeart {
+            from { transform: rotateY(0deg) rotateX(10deg); }
+            to { transform: rotateY(360deg) rotateX(10deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* رسالة نصية بسيطة */
+        .message {
+            position: absolute;
+            bottom: 50px;
+            color: white;
+            font-size: 1.2rem;
+            opacity: 0;
+            transition: opacity 2s;
+            text-align: center;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="overlay">
+        <button id="start-btn">إبدأ السحر ✨</button>
+    </div>
+
+    <div class="scene" id="main-scene">
+        <div class="heart-container rotating-heart" id="heart">
+            </div>
+    </div>
+
+    <div class="message" id="msg">تحياتي </div>
+
+    <script>
+        const heartContainer = document.getElementById('heart');
+        const overlay = document.getElementById('overlay');
+        const startBtn = document.getElementById('start-btn');
+        const scene = document.getElementById('main-scene');
+        const msg = document.getElementById('msg');
+
+        // معادلة رسم شكل القلب رياضياً في فضاء 3D
+        function createHeart() {
+            const totalLetters = 60; // عدد حروف T
+            for (let i = 0; i < totalLetters; i++) {
+                const t = i / totalLetters * Math.PI * 2;
+                
+                // معادلة القلب الرياضية
+                const x = 16 * Math.pow(Math.sin(t), 3);
+                const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+                
+                const span = document.createElement('div');
+                span.className = 'letter-t';
+                span.innerText = 'T';
+                
+                // توزيع الحروف في الـ 3D
+                const scale = 10; 
+                const z = Math.sin(t * 2) * 20; // إضافة عمق بسيط للـ 3D
+                
+                span.style.transform = `translate3d(${x * scale}px, ${y * scale}px, ${z}px)`;
+                heartContainer.appendChild(span);
+            }
+        }
+
+        startBtn.addEventListener('click', () => {
+            overlay.classList.add('fade-out');
+            scene.style.display = 'block';
+            createHeart();
+            setTimeout(() => {
+                msg.style.opacity = '1';
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
